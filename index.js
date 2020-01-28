@@ -5,12 +5,13 @@ const app = express();
 //query params = ?test=1
 //Route params = /users/1
 //Request body = {"name": "Tadeu", "email": "tadeudanilo46@gmail.com"}
- 
-app.get('/users/:id', (req, res) => {
+const users = ["Danilo", " Tadeu", "da", "silva"]
 
-  const {id} = req.params;
+app.get('/users/:index', (req, res) => {
 
-  return res.json({menssege: `buscndo... ${id}`}) ;
+  const {index} = req.params;
+
+  return res.json(users[index]) ;
 });
 
-app.listen(3000)
+app.listen(3000);
