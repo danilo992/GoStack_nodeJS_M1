@@ -11,12 +11,12 @@ app.use(express.json());
 // CRUD - Create, Read, Update, Delete
 const users = ['danilo', 'tadeu', 'Lindi', 'Lorena'];
 
-app.use((req, res, next) => {
-  console.time('requets');
-  console.log(`Método: ${req.method}; URL: ${req.url}`);
-  next()
-  console.timeEnd('requets');
-})
+//app.use((req, res, next) => {
+//  console.time('requets');
+//  console.log(`Método: ${req.method}; URL: ${req.url}`);
+//  next()
+//  console.timeEnd('requets');
+//})
 
 //lista todo os usuários
 app.get('/users', (req, res) => {
@@ -24,7 +24,7 @@ app.get('/users', (req, res) => {
 });
 
 //lista 1 usuário espercífico
-app.get('/users/:index', (req, res) => {
+app.get('/users/:index', checkUserInArray, (req, res) => {
   const { index } = req.params;
 
   return res.json(users[index]);
@@ -38,8 +38,23 @@ app.get('/teste', (req, res) => {
   return res.json({messege: `${nome} sucess...` })
 });
 
+function ckeckUserExit(req, res, next) {
+  const user = req.body.name;
+  if(!user) {
+    return res.status(404).json({err: 'User name is requered!!!'});
+  }
+  next()
+}
+
+function checkUserInArray(req, res, next) {
+  if(!users[req.params.index]) {
+    return res.status(400).json({ erro: "User does not exits" });
+  }
+  next()
+}
+
 //cadastra usuário
-app.post('/users', (req, res) => {
+app.post('/users', ckeckUserExit, (req, res) => {
   const { name } = req.body;
 
   users.push(name);
@@ -48,7 +63,7 @@ app.post('/users', (req, res) => {
 });
 
 //edita usuário
-app.put('/users/:index', (req, res) => {
+app.put('/users/:index', ckeckUserExit, checkUserInArray, (req, res) => {
   const { index } = req.params;
   const { name } = req.body;
 
@@ -58,15 +73,13 @@ app.put('/users/:index', (req, res) => {
 });
 
 //delete usuário
-app.delete('users/:index', (req, res) => {
+app.delete('/users/:index', checkUserInArray, (req, res) => {
   const { index } = req.params;
 
   users.splice(index, 1);
 
-  return res.send();
+  return res.json(users);
 
-})
-
-
+});
 
 app.listen(3000);
