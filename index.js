@@ -12,8 +12,10 @@ app.use(express.json());
 const users = ['danilo', 'tadeu', 'Lindi', 'Lorena'];
 
 app.use((req, res, next) => {
-  console.log('A requisição foi chamada');
+  console.time('requets');
+  console.log(`Método: ${req.method}; URL: ${req.url}`);
   next()
+  console.timeEnd('requets');
 })
 
 //lista todo os usuários
